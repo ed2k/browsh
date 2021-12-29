@@ -34,7 +34,7 @@ jobs:
         run: |
           pwd
           ls -l
-          ./interfacer/contrib/setup_dep.sh
+          ls -l ./interfacer/contrib/ | grep setup
           ./webext/contrib/setup_node.sh
           cd ./interfacer && dep ensure
           pwd
