@@ -29,10 +29,14 @@ jobs:
       - name: Run a one-line script
         run: echo Hello, world!
 
-      - name: Run a multi-line script
+      - name: Setup go
         uses: actions/setup-go@v2
         with:
           go-version: 1.16
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '12.x'
 
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
@@ -41,7 +45,7 @@ jobs:
           ls -l
           ls -l ./interfacer/contrib/ | grep setup
           ./webext/contrib/setup_node.sh
-          cd ./interfacer && dep ensure
+          echo cd ./interfacer && dep ensure
           pwd
           cd ./webext
           source ~/.nvm/nvm.sh
@@ -49,4 +53,10 @@ jobs:
           npm run get-gobindata
           npm install
           npm run build
+          npm test
+          cd ..
+          pwd
+          go test $(find src/browsh -name *.go | grep -v windows)
+          go test test/tty/*.go -v -ginkgo.slowSpecThreshold=30 -ginkgo.flakeAttempts=3
+          go test test/http-server/*.go -v -ginkgo.slowSpecThreshold=30 -ginkgo.flakeAttempts=3
 
