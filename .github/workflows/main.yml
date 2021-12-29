@@ -34,6 +34,14 @@ jobs:
         run: |
           pwd
           ls -l
-          cd browsh
           ./interfacer/contrib/setup_dep.sh
           ./webext/contrib/setup_node.sh
+          cd ./interfacer && dep ensure
+          pwd
+          cd ./webext
+          source ~/.nvm/nvm.sh
+          pwd
+          npm run get-gobindata
+          npm install
+          npm run build
+
