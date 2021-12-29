@@ -45,7 +45,7 @@ jobs:
           ls -l
           ls -l ./interfacer/contrib/ | grep setup
           ./webext/contrib/setup_node.sh
-          echo cd ./interfacer && dep ensure
+          echo cd ./interfacer AA dep ensure
           pwd
           cd ./webext
           source ~/.nvm/nvm.sh
