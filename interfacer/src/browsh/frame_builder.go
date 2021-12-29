@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"unicode"
+	"unicode/utf8"
 
 	"github.com/gdamore/tcell"
 )
@@ -176,7 +177,8 @@ func (f *frame) populateFrameText(incoming incomingFrameText) {
 		f.textColours = make(map[int]tcell.Color, (f.domRowCount())*f.totalWidth)
 	}
 	for y := 0; y < f.subRowCount(); y++ {
-		for x := 0; x < f.subWidth; x++ {
+		cellx := 0
+		for x := 0; cellx < f.subWidth; x++ {
 			cellIndex = f.getCellIndexFromSubCoords(x, y*2)
 			frameIndex = (y * f.subWidth) + x
 			colourIndex = frameIndex * 3
@@ -185,7 +187,37 @@ func (f *frame) populateFrameText(incoming incomingFrameText) {
 				incoming.Colours[colourIndex+1],
 				incoming.Colours[colourIndex+2],
 			)
-			f.text[cellIndex] = []rune(incoming.Text[frameIndex])
+			cellIndex2 := f.getCellIndexFromSubCoords(cellx, y*2)
+			f.text[cellIndex2] = []rune(incoming.Text[frameIndex])
+			t := incoming.Text[frameIndex]
+			b := []byte(t)
+			if len(b) > 0 {
+				// Log(fmt.Sprintf("%d %d %d %s", x, len(b), b[0], t))
+				// non-ascii is often wider, double the width
+				if len(b) > 2 {
+					r, _ := utf8.DecodeRune(b)
+					f.text[cellIndex2] = []rune(incoming.Text[frameIndex])
+					f.text[cellIndex2][0] = r
+					f.textColours[cellIndex2] = tcell.NewRGBColor(
+						incoming.Colours[colourIndex+0],
+						incoming.Colours[colourIndex+1],
+						incoming.Colours[colourIndex+2],
+					)
+					f.textColours[cellIndex2+1] = tcell.NewRGBColor(
+						incoming.Colours[colourIndex+0],
+						incoming.Colours[colourIndex+1],
+						incoming.Colours[colourIndex+2],
+					)
+					cellx += 2
+				} else {
+					cellx++
+				}
+			} else {
+				// bypass non printable if the actual x is ahead
+				if cellx == x {
+					cellx++
+				}
+			}
 			f.buildCell(f.subLeft+x, (f.subTop/2)+y)
 		}
 	}
