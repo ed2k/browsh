@@ -55,10 +55,11 @@ jobs:
           npm run build
           npm test
           cd ..
-          echo check current path hopefully interface
+          echo check current path hopefully interfacer
           pwd
           cd interfacer
-          go test $(find src/browsh -name *.go | grep -v windows)
-          go test test/tty/*.go -v -ginkgo.slowSpecThreshold=30 -ginkgo.flakeAttempts=3
-          go test test/http-server/*.go -v -ginkgo.slowSpecThreshold=30 -ginkgo.flakeAttempts=3
+          echo go test $(find src/browsh -name *.go | grep -v windows)
+          echo go test test/tty/*.go -v -ginkgo.slowSpecThreshold=30 -ginkgo.flakeAttempts=3
+          echo go test test/http-server/*.go -v -ginkgo.slowSpecThreshold=30 -ginkgo.flakeAttempts=3
+          . contrib/build_browsh.sh
 
